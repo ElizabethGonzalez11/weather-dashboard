@@ -76,25 +76,29 @@ function searchWeather(queryURL) {
     let formattedDate = moment.unix(response.dt).format('L');
     dateEl.text(formattedDate);
     let weatherIcon = response.weather[0].icon;
-    weatherIconEl.attr('src', `http://openweathermap.org/img/wn/${weatherIcon}@2x.png`).attr('alt', response.weather[0].description);
+    weatherIconEl.attr('src', `https://openweathermap.org/img/wn/${weatherIcon}@2x.png`).attr('alt', response.weather[0].description);
     temperatureEl.html(((response.main.temp - 273.15) * 1.8 + 32).toFixed(1));
     humidityEl.text(response.main.humidity);
     windEl.text((response.wind.speed * 2.237).toFixed(1));
 
     let lat = response.coord.lat;
     let lon = response.coord.lon;
-    let queryURLAll = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=5a1d9d620b2432b2bfb80d3816169b84`;
+    let queryURLAll = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=5a1d9d620b2432b2bfb80d3816169b84`;
     $.ajax({
       url: queryURLAll,
-      method: 'GET',
-    })
-    for (let i=0; i<= 5; i++) {
+      method: 'GET'
+    }).then (function (response){
+      let fiveDay = response.daily;
+    
+     for (let i=0; i<Math.min(fiveDay.length, 6); i++) {
       let currDay = fiveDay[i];
-      $(`div.day-${i} .card-title`).text(moment.unix(currDay.dt).format('L'));
-      $(`div.day-${i}.fiveDay-img`).attr('src', `http://openweathermap.org/img/wn/${currDay.weather[0].icon}.png`).attr('alt', currDay.weather[0].description);
-      $(`div.day-${i} .fiveDay-temp`).text(((currDay.temp.day - 273.15) * 1.8 + 32).toFixed(1));
-      $(`div.day-${i} .fiveDay-humid`).text(currDay.humidity);
+      $(`div.day-${i}.card-title`).text(moment.unix(currDay.dt).format('L'));
+      $(`div.day-${i}.fiveDay-img`).attr('src', `https://openweathermap.org/img/wn/${currDay.weather[0].icon}@2x.png`).attr('alt', currDay.weather[0].description);
+      $(`div.day-${i}.fiveDay-temp`).text(((currDay.temp.day - 273.15) * 1.8 + 32).toFixed(1));
+      $(`div.day-${i}.fiveDay-humid`).text(currDay.humidity);
+      $(`div.day-${i}.fiveDay-wind`).text((currDay.wind.speed * 2.237).toFixed(1))
     }
+  });
   });
 };
 
@@ -126,7 +130,7 @@ $('#search-btn').on('click', function (event) {
 }); 
 
 
-$(document).on("click", "button.city-btn", function (event) {
+$(document).on('click', 'button.city-btn', function (event) {
   let clickedCity = $(this).text();
   let foundCity = $.grep(pastCities, function (storedCity) {
     return clickedCity === storedCity.city;
