@@ -10,7 +10,7 @@ $(document).ready(function() {
   const cityInput = $('#city-input');
 
 let pastCities = [];
-
+//converting entries to upper case
 function compare(a, b) {
   const cityA = a.city.toUpperCase();
   const cityB = b.city.toUpperCase();
@@ -42,7 +42,7 @@ function buildURLFromInputs(city) {
 function buildURLFromId(id) {
   return `https://api.openweathermap.org/data/2.5/weather?id=${id}&appid=5a1d9d620b2432b2bfb80d3816169b84`;
 }
-
+//displaying past cities for future reference
 function displayCities(pastCities) {
   cityListEl.empty();
   pastCities.splice(5);
@@ -71,7 +71,7 @@ function searchWeather(queryURL) {
     pastCities.unshift({city, id});
     storeCities();
     displayCities(pastCities);
-
+//weather icon and converstion for temp/wind speed
     cityEl.text(response.name);
     let formattedDate = moment.unix(response.dt).format('L');
     dateEl.text(formattedDate);
@@ -89,7 +89,7 @@ function searchWeather(queryURL) {
       method: 'GET'
     }).then (function (response){
       let fiveDay = response.daily;
-    
+    //getting 5 day forcast
      for (let i=0; i<Math.min(fiveDay.length, 6); i++) {
       let currDay = fiveDay[i];
       $(`div.day-${i}.card-title`).text(moment.unix(currDay.dt).format('L'));
@@ -101,7 +101,7 @@ function searchWeather(queryURL) {
   });
   });
 };
-
+//if no cities are displayed, default to Austin
 function displayLastSearchedCity() {
   if (pastCities[0]) {
       let queryURL = buildURLFromId(pastCities[0].id);
