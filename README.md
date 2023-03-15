@@ -27,4 +27,4 @@ THEN I am again presented with current and future conditions for that city
 ```
 ## Visuals
 
-
+./Assets/images/snapshot.png
